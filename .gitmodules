@@ -1,0 +1,6 @@
+[submodule "single-spa-app-vue3-vite-template"]
+	path = single-spa-app-vue3-vite-template
+	url = https://github.com/gokingliu/single-spa-app-vue3-vite-template.git
+[submodule "single-spa-root-template"]
+	path = single-spa-root-template
+	url = https://github.com/gokingliu/single-spa-root-template.git

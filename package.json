@@ -1,0 +1,23 @@
+{
+  "name": "single-spa-run-all",
+  "version": "1.0.0",
+  "description": "批量运行主应用和子应用",
+  "scripts": {
+    "install-all": "npm-run-all install:*",
+    "install:root": "cd single-spa-root-template && npm i",
+    "install:vue3-vite": "cd single-spa-app-vue3-vite-template && npm i",
+    "install:vue3-webpack": "cd single-spa-app-vue3-webpack5-template && npm i",
+    "start-vite": "npm-run-all --parallel start:@vite/*",
+    "start:@vite/root": "cd single-spa-root-template && npm run vite -- --port 8880",
+    "start:@vite/vue3-vite": "cd single-spa-app-vue3-vite-template && npm run vite -- --port 8881",
+    "start:@vite/vue3-webpack": "cd single-spa-app-vue3-webpack5-template && npm run vite -- --port 8882",
+    "start-webpack": "npm-run-all --parallel start:@webpack/*",
+    "start:@webpack/root": "cd single-spa-root-template && npm run webpack -- --port 8880",
+    "start:@webpack/vue3-vite": "cd single-spa-app-vue3-vite-template && npm run webpack -- --port 8881",
+    "start:@webpack/vue3-webpack": "cd single-spa-app-vue3-webpack5-template && npm run webpack -- --port 8882"
+  },
+  "author": "gokingliu",
+  "devDependencies": {
+    "npm-run-all": "^4.1.5"
+  }
+}
