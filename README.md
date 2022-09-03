@@ -1,9 +1,23 @@
 # SingleSpa 批量管理
 
 - 项目名称: single-spa-template
-- 说明: 使用 npm-run-all 工具，批量安装 node modules、批量启动主应用和子应用
+- 说明: 使用 npm-run-all 工具，批量安装 node modules，批量启动主应用和子应用
 
-## 批量管理
+## 克隆代码
+
+本仓库包含所有主应用和子应用
+
+```shell
+git clone https://github.com/gokingliu/single-spa-template.git
+```
+
+## 安装本仓库依赖
+
+```shell
+npm i
+```
+
+## 批量管理主应用和子应用
 
 - 批量安装
 
