@@ -4,3 +4,6 @@
 [submodule "single-spa-root-template"]
 	path = single-spa-root-template
 	url = https://github.com/gokingliu/single-spa-root-template.git
+[submodule "single-spa-app-vue3-webpack5-template"]
+	path = single-spa-app-vue3-webpack5-template
+	url = https://github.com/gokingliu/single-spa-app-vue3-webpack5-template.git
