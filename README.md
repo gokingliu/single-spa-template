@@ -11,7 +11,7 @@
 git clone https://github.com/gokingliu/single-spa-template.git
 ```
 
-## 安装本仓库依赖
+## 安装 npm-run-all
 
 ```shell
 npm i
