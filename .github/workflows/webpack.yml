@@ -11,19 +11,26 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
+
+    # 拉取代码
     - uses: actions/checkout@v3
       with:
         submodules: true
 
+    # 设置 node 环境
     - name: Use Node.js
       uses: actions/setup-node@v3
       with:
         node-version: 16.x
 
+    # 构建
     - name: Build
       run: |
+        # 进入主应用目录
         cd single-spa-root-template
-        ls
-        cat package.json
+        # 安装 node modules
         npm install
+        # 打包
         npm run build
+        # 压缩
+        zip -r dist.zip dist/
