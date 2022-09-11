@@ -20,7 +20,7 @@ jobs:
 
     - name: Build
       run: |
-        ll
+        ls
         cd single-spa-root-template
         npm install
         npm run build
