@@ -7,11 +7,12 @@ on:
     branches: [ "master" ]
 
 jobs:
+  # 构建、部署主应用
   build-root:
     runs-on: ubuntu-latest
     
+    # 步骤
     steps:
-
     # 拉取代码
     - uses: actions/checkout@v3
       with:
@@ -34,3 +35,25 @@ jobs:
         npm run build
         # 压缩
         zip -r dist.zip dist/
+    
+    # 上传静态资源
+    - name: Upload
+      uses: easingthemes/ssh-deploy@master
+      env:
+          SSH_PRIVATE_KEY: ${{ env.KEY }}
+          ARGS: '-avz --delete'
+          SOURCE: './dist.zip'
+          REMOTE_HOST: ${{ env.HOST }}
+          REMOTE_USER: ${{ env.USERNAME }}
+          TARGET: /root/static # 服务器目标路径
+
+    - name: Deploy
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+        password: ${{ secrets.PASSWORD }}
+        port: ${{ secrets.PORT }}
+        script: whoami
+
+        
