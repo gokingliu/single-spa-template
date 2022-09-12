@@ -32,7 +32,6 @@ jobs:
         npm run build # 打包
         rm -f deploy_key dist.zip
         zip -r dist.zip dist/ # 压缩
-        ls
         pwd
     
     # 上传静态资源
