@@ -34,21 +34,17 @@ jobs:
         zip -r dist.zip dist/ # 压缩
         ls
         pwd
-        echo ${{ secrets.KEY }} >> deploy_key
-        sudo apt-get --no-install-recommends install rsync
-        rsync single-spa-root-template/dist.zip ${{ secrets.USERNAME }}@${{ secrets.HOST }}:/${{ secrets.USERNAME }}/static --rsh "ssh -p ${{ secrets.PORT }} -i deploy_key -o StrictHostKeyChecking=no" --recursive --exclude= -rltgoDzvO --delete
-        rm -f deploy_key dist.zip
     
     # 上传静态资源
-#     - name: Upload
-#       uses: easingthemes/ssh-deploy@main
-#       env:
-#         SSH_PRIVATE_KEY: ${{ secrets.KEY }}
-#         ARGS: '-rltgoDzvO --delete'
-#         SOURCE: 'dist.zip'
-#         REMOTE_HOST: ${{ secrets.HOST }}
-#         REMOTE_USER: ${{ secrets.USERNAME }}
-#         TARGET: /root/static # 服务器目标路径
+    - name: Upload
+      uses: easingthemes/ssh-deploy@main
+      env:
+        SSH_PRIVATE_KEY: ${{ secrets.KEY }}
+        ARGS: '-rltgoDzvO --delete'
+        SOURCE: 'single-spa-root-template/dist.zip'
+        REMOTE_HOST: ${{ secrets.HOST }}
+        REMOTE_USER: ${{ secrets.USERNAME }}
+        TARGET: /root/static # 服务器目标路径
 
     - name: Deploy
       uses: appleboy/ssh-action@master
