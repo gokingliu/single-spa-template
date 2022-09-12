@@ -22,7 +22,7 @@ jobs:
     - name: Use Node.js
       uses: actions/setup-node@v3
       with:
-        node-version: 16.x
+        node-version: 12.x
 
     # 构建
     - name: Build
@@ -37,7 +37,7 @@ jobs:
       uses: easingthemes/ssh-deploy@main
       env:
         SSH_PRIVATE_KEY: ${{ env.KEY }}
-        ARGS: '-avz --delete'
+        ARGS: '-rltgoDzvO --delete'
         SOURCE: './dist.zip'
         REMOTE_HOST: ${{ env.HOST }}
         REMOTE_USER: ${{ env.USERNAME }}
