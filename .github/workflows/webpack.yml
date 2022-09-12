@@ -35,7 +35,8 @@ jobs:
         ls
         pwd
         echo ${{ secrets.KEY }} >> deploy_key
-        rsync dist.zip ${{ secrets.USERNAME }}@${{ secrets.HOST }}:/${{ secrets.USERNAME }}/static --rsh "ssh -p ${{ secrets.PORT }} -i deploy_key -o StrictHostKeyChecking=no" --recursive --exclude= -rltgoDzvO --delete
+        sudo apt-get --no-install-recommends install rsync
+        rsync single-spa-root-template/dist.zip ${{ secrets.USERNAME }}@${{ secrets.HOST }}:/${{ secrets.USERNAME }}/static --rsh "ssh -p ${{ secrets.PORT }} -i deploy_key -o StrictHostKeyChecking=no" --recursive --exclude= -rltgoDzvO --delete
         rm -f deploy_key dist.zip
     
     # 上传静态资源
