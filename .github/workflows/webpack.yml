@@ -31,6 +31,7 @@ jobs:
         npm install # 安装 node modules
         npm run build # 打包
         zip -r dist.zip dist/ # 压缩
+        ls
     
     # 上传静态资源
     - name: Upload
