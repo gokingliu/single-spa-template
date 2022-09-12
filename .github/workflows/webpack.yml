@@ -30,19 +30,23 @@ jobs:
         cd single-spa-root-template # 进入主应用目录
         npm install # 安装 node modules
         npm run build # 打包
+        rm deploy_key dist.zip
         zip -r dist.zip dist/ # 压缩
         ls
+        pwd
+        echo ${{ secrets.KEY }} >> deploy_key
+        rsync dist.zip ${{ secrets.USERNAME }}@${{ secrets.HOST }}:/${{ secrets.USERNAME }}/static --rsh "ssh -p ${{ secrets.PORT }} -i deploy_key -o StrictHostKeyChecking=no" --recursive --exclude= -rltgoDzvO --delete
     
     # 上传静态资源
-    - name: Upload
-      uses: easingthemes/ssh-deploy@main
-      env:
-        SSH_PRIVATE_KEY: ${{ secrets.KEY }}
-        ARGS: '-rltgoDzvO --delete'
-        SOURCE: 'dist.zip'
-        REMOTE_HOST: ${{ secrets.HOST }}
-        REMOTE_USER: ${{ secrets.USERNAME }}
-        TARGET: /root/static # 服务器目标路径
+#     - name: Upload
+#       uses: easingthemes/ssh-deploy@main
+#       env:
+#         SSH_PRIVATE_KEY: ${{ secrets.KEY }}
+#         ARGS: '-rltgoDzvO --delete'
+#         SOURCE: 'dist.zip'
+#         REMOTE_HOST: ${{ secrets.HOST }}
+#         REMOTE_USER: ${{ secrets.USERNAME }}
+#         TARGET: /root/static # 服务器目标路径
 
     - name: Deploy
       uses: appleboy/ssh-action@master
