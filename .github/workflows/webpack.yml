@@ -1,10 +1,20 @@
 name: NodeJS with Webpack
 
+# 触发条件
 on:
   push:
     branches: [ "master" ]
   pull_request:
     branches: [ "master" ]
+
+# 环境变量
+env:
+  ROOT_STATIC_PATH: /root/single_spa # 部署服务器，主应用资源路径
+  ROOT_PATH: single-spa-root-template # Github Actions 主应用代码路径
+  APP1_STATIC_PATH: /root/single_spa/static/single-spa-app-vue3-vite-template # 部署服务器，子应用1资源路径
+  APP1_PATH: single-spa-app-vue3-vite-template # Github Actions 子应用1代码路径
+  APP2_STATIC_PATH: /root/single_spa/static/single-spa-app-vue3-webpack5-template # 部署服务器，子应用2资源路径
+  APP2_PATH: single-spa-app-vue3-webpack5-template # Github Actions 子应用2代码路径
 
 jobs:
   # 构建、部署主应用
@@ -27,6 +37,9 @@ jobs:
     # 构建
     - name: Build
       run: |
+        echo '${{ toJSON(github.ref) }}'
+        echo '${{ toJSON(github.ref_name) }}'
+        echo '${{ toJSON(github.run_number) }}'
         cd single-spa-root-template # 进入主应用目录
         npm install # 安装 node modules
         npm run build # 打包
