@@ -30,9 +30,9 @@ jobs:
         cd single-spa-root-template # 进入主应用目录
         npm install # 安装 node modules
         npm run build # 打包
-        rm -f deploy_key dist.zip
-        zip -r dist.zip dist/ # 压缩
-        pwd
+        cd dist # 进入静态资源目录
+        rm -f dist.zip # 删除之前存在的压缩文件
+        zip -r dist.zip * # 压缩
     
     # 上传静态资源
     - name: Upload
@@ -40,11 +40,12 @@ jobs:
       env:
         SSH_PRIVATE_KEY: ${{ secrets.KEY }}
         ARGS: '-rltgoDzvO --delete'
-        SOURCE: 'single-spa-root-template/dist.zip'
+        SOURCE: 'single-spa-root-template/dist/dist.zip'
         REMOTE_HOST: ${{ secrets.HOST }}
         REMOTE_USER: ${{ secrets.USERNAME }}
-        TARGET: /root/static # 服务器目标路径
+        TARGET: /root/single_spa
 
+    # 解压静态资源
     - name: Deploy
       uses: appleboy/ssh-action@master
       with:
@@ -53,7 +54,7 @@ jobs:
         key: ${{ secrets.KEY }}
         port: ${{ secrets.PORT }}
         script: |
-          cd /root/static
+          cd /root/single_spa
           unzip dist.zip
           
 
