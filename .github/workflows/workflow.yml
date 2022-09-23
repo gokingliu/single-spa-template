@@ -16,8 +16,8 @@ env:
   APP2_PATH: single-spa-app-vue3-webpack5-template # Github Actions 子应用2代码路径
 
 jobs:
-  # 构建、部署主应用
-  build-root:
+  # 克隆代码仓库
+  checkout-git:
     runs-on: ubuntu-latest
     
     # 步骤
@@ -29,6 +29,7 @@ jobs:
 
   # 复用工作流 - 构建并部署主应用
   deploy-root-app:
+    needs: checkout-git
     uses: ./.github/workflows/reusable.yaml
     with:
       APP_NAME: single-spa-root-template
