@@ -8,19 +8,40 @@ on:
 
 # 环境变量
 env:
+  ROOT_NAME: single-spa-root-template # 主应用名
   ROOT_STATIC_PATH: /root/single_spa # 部署服务器，主应用资源路径
-  ROOT_PATH: single-spa-root-template # Github Actions 主应用代码路径
-  APP1_STATIC_PATH: /root/single_spa/static/single-spa-app-vue3-vite-template # 部署服务器，子应用1资源路径
-  APP1_PATH: single-spa-app-vue3-vite-template # Github Actions 子应用1代码路径
-  APP2_STATIC_PATH: /root/single_spa/static/single-spa-app-vue3-webpack5-template # 部署服务器，子应用2资源路径
-  APP2_PATH: single-spa-app-vue3-webpack5-template # Github Actions 子应用2代码路径
+  ROOT_DIST_NAME: dist-root-${{ github.run_number }}.tar # 主应用压缩文件名称
+  APP1_NAME: single-spa-app-vue3-vite-template # 子应用名
+  APP1_STATIC_PATH: /root/single_spa/static/single-spa-app-vue3-vite-template # 部署服务器，子应用资源路径
+  APP1_DIST_NAME: dist-app1-${{ github.run_number }}.tar # 子应用压缩文件名称
+  APP2_NAME: single-spa-app-vue3-webpack5-template # 子应用名
+  APP2_STATIC_PATH: /root/single_spa/static/single-spa-app-vue3-webpack5-template # 部署服务器，子应用资源路径
+  APP2_DIST_NAME: dist-app2-${{ github.run_number }}.tar # 子应用压缩文件名称
 
 jobs:
   # 复用工作流 - 构建并部署主应用
-  deploy-root-app:
+  deploy-root:
     uses: ./.github/workflows/reusable.yaml
     with:
-      APP_NAME: single-spa-root-template
-      ROOT_STATIC_PATH: /root/single_spa
-      DIST_NAME: dist-root-app-${{ github.run_number }}.tar
+      APP_NAME: ${{ env.ROOT_NAME }}
+      STATIC_PATH: ${{ env.ROOT_STATIC_PATH }}
+      DIST_NAME: ${{ env.ROOT_DIST_NAME }}
+    secrets: inherit
+
+  # 复用工作流 - 构建并部署子应用
+  deploy-app1:
+    uses: ./.github/workflows/reusable.yaml
+    with:
+      APP_NAME: ${{ env.APP1_NAME }}
+      STATIC_PATH: ${{ env.APP1_STATIC_PATH }}
+      DIST_NAME: ${{ env.APP1_DIST_NAME }}
+    secrets: inherit
+
+  # 复用工作流 - 构建并部署子应用
+  deploy-app2:
+    uses: ./.github/workflows/reusable.yaml
+    with:
+      APP_NAME: ${{ env.APP2_NAME }}
+      STATIC_PATH: ${{ env.APP2_STATIC_PATH }}
+      DIST_NAME: ${{ env.APP2_DIST_NAME }}
     secrets: inherit
