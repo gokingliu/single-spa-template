@@ -39,6 +39,10 @@ jobs:
     - name: Build
       run: |
         cd ${{ inputs.APP_NAME }}
+        echo '-----'
+        ls
+        pwd
+        echo '-----'
         npm install # 安装 node modules
         npm run build # 打包
         cd dist # 进入静态资源目录
