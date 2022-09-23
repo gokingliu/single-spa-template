@@ -20,7 +20,7 @@ on:
 # 任务
 jobs:
   # 构建任务
-  build-root-app:
+  build-app:
     # 运行在 Ubuntu 上
     runs-on: ubuntu-latest
     
@@ -28,6 +28,8 @@ jobs:
     steps:
     # 拉取代码
     - uses: actions/checkout@v3
+      with:
+        submodules: true
 
     # 设置 Node 环境
     - name: Node
@@ -57,9 +59,9 @@ jobs:
         path: ${{ inputs.APP_NAME }}/${{ inputs.DIST_NAME }}
 
   # 上传并部署
-  deploy-root-app:
+  deploy-app:
     # 依赖构建任务
-    needs: build-root-app
+    needs: build-app
     # 运行在 Ubuntu 上
     runs-on: ubuntu-latest
     
