@@ -1,0 +1,110 @@
+name: Reusable Deploy Single-Spa App Workflow
+
+# 触发条件
+on:
+  workflow_call:
+    inputs:
+      # 应用名
+      APP_NAME:
+        required: true
+        type: string
+      # 部署服务器的资源路径
+      ROOT_STATIC_PATH:
+        required: true
+        type: string
+      # Github Actions 压缩文件名称
+      DIST_NAME:
+        required: true
+        type: string
+
+# 任务
+jobs:
+  # 构建任务
+  build-root-app:
+    # 运行在 Ubuntu 上
+    runs-on: ubuntu-latest
+    
+    # 步骤
+    steps:
+    # 拉取代码
+    - uses: actions/checkout@v3
+
+    # 设置 Node 环境
+    - name: Node
+      uses: actions/setup-node@v3
+      with:
+        node-version: 16.x
+
+    # 构建
+    - name: Build
+      run: |
+        cd ${{ inputs.APP_NAME }}
+        npm install # 安装 node modules
+        npm run build # 打包
+        cd dist # 进入静态资源目录
+        rm -f ${{ inputs.DIST_NAME }} # 删除之前存在的压缩文件
+        tar -zcf ../${{ inputs.DIST_NAME }} * # 压缩
+    
+    # 上传资源 (部署任务会下载该资源)
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: ${{ inputs.DIST_NAME }}
+        path: ${{ inputs.APP_NAME }}/${{ inputs.DIST_NAME }}
+
+  # 上传并部署
+  deploy-root-app:
+    # 依赖构建任务
+    needs: build-root-app
+    # 运行在 Ubuntu 上
+    runs-on: ubuntu-latest
+    
+    # 步骤
+    steps:
+    # 下载资源
+    - name: Download Artifact
+      uses: actions/download-artifact@v3
+      with:
+        name: ${{ inputs.DIST_NAME }}
+
+    # 根据触发分支选择不同环境的 secrets name
+    - name: Get Secrets Name
+      id: secrets_name
+      run: |
+        declare -u HOST='HOST_${{ github.ref_name }}' # 设置 HOST 变量
+        echo "::set-output name=host::${HOST}"  # 使用 outputs 将变量 host 传递给其他步骤
+        declare -u USERNAME='USERNAME_${{ github.ref_name }}' # 设置 USERNAME 变量
+        echo "::set-output name=username::${USERNAME}"  # 使用 outputs 将变量 username 传递给其他步骤
+        declare -u KEY='KEY_${{ github.ref_name }}' # 设置 KEY 变量
+        echo "::set-output name=key::${KEY}"  # 使用 outputs 将变量 key 传递给其他步骤
+        declare -u PORT='PORT_${{ github.ref_name }}' # 设置 PORT 变量
+        echo "::set-output name=port::${PORT}"  # 使用 outputs 将变量 port 传递给其他步骤
+
+    # 上传资源到部署服务器
+    - name: Upload Host
+      uses: easingthemes/ssh-deploy@main
+      env:
+        REMOTE_HOST: ${{ secrets[steps.secrets_name.outputs.host] }} # 部署服务器地址
+        REMOTE_USER: ${{ secrets[steps.secrets_name.outputs.username] }} # 部署服务器用户名
+        SSH_PRIVATE_KEY: ${{ secrets[steps.secrets_name.outputs.key] }} # 部署服务器私钥
+        ARGS: '-rltgoDzvO --delete'
+        SOURCE: ${{ inputs.DIST_NAME }} # Github Actions 压缩文件路径
+        TARGET: ${{ inputs.ROOT_STATIC_PATH }} # 部署服务器资源路径
+
+    # 解压静态资源
+    - name: Deploy
+      uses: appleboy/ssh-action@master
+      env:
+        HOST: ${{ secrets[steps.secrets_name.outputs.host] }}
+        USERNAME: ${{ secrets[steps.secrets_name.outputs.username] }}
+        KEY: ${{ secrets[steps.secrets_name.outputs.key] }}
+        PORT: ${{ secrets[steps.secrets_name.outputs.port] }}
+      with:
+        host: ${{ env.HOST }} # 部署服务器地址
+        username: ${{ env.USERNAME }} # 部署服务器用户名
+        key: ${{ env.KEY }} # 部署服务器私钥
+        port: ${{ env.PORT_PRO }} # 部署服务器端口
+        script: |
+          cd ${{ inputs.ROOT_STATIC_PATH }}
+          tar -zxf ${{ inputs.DIST_NAME }}
+          rm -f ${{ inputs.DIST_NAME }}
