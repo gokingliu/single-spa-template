@@ -9,7 +9,7 @@ on:
         required: true
         type: string
       # 部署服务器的资源路径
-      ROOT_STATIC_PATH:
+      STATIC_PATH:
         required: true
         type: string
       # Github Actions 压缩文件名称
@@ -41,10 +41,6 @@ jobs:
     - name: Build
       run: |
         cd ${{ inputs.APP_NAME }}
-        echo '-----'
-        ls
-        pwd
-        echo '-----'
         npm install # 安装 node modules
         npm run build # 打包
         cd dist # 进入静态资源目录
@@ -95,7 +91,7 @@ jobs:
         SSH_PRIVATE_KEY: ${{ secrets[steps.secrets_name.outputs.key] }} # 部署服务器私钥
         ARGS: '-rltgoDzvO --delete'
         SOURCE: ${{ inputs.DIST_NAME }} # Github Actions 压缩文件路径
-        TARGET: ${{ inputs.ROOT_STATIC_PATH }} # 部署服务器资源路径
+        TARGET: ${{ inputs.STATIC_PATH }} # 部署服务器资源路径
 
     # 解压静态资源
     - name: Deploy
@@ -111,6 +107,6 @@ jobs:
         key: ${{ env.KEY }} # 部署服务器私钥
         port: ${{ env.PORT_PRO }} # 部署服务器端口
         script: |
-          cd ${{ inputs.ROOT_STATIC_PATH }}
+          cd ${{ inputs.STATIC_PATH }}
           tar -zxf ${{ inputs.DIST_NAME }}
           rm -f ${{ inputs.DIST_NAME }}
